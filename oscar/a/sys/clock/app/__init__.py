@@ -1,0 +1,2 @@
+G_NAME_MODULE_CLOCK_MAIN = "ClockMain"
+G_NAME_GROUP_CLOCK_MAIN = "default"

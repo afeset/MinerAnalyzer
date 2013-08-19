@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<release>
+ <name>dev/python/unittest2</name>
+ <version>0.5.1</version>
+ <build>8777</build>
+ <id>python-ut</id>
+</release>

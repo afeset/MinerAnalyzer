@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<release>
+ <name>dev/pyreadline</name>
+ <version>1.7.1</version>
+ <build>22633</build>
+ <id>pyreadline</id>
+</release>

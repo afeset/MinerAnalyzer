@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<release>
+ <name>dev/tools/yappi</name>
+ <version>0.62</version>
+ <build>27248</build>
+ <id>target</id>
+</release>

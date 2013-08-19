@@ -1,0 +1,4 @@
+G_NAME_MODULE_CLOCK_OPERATION = "TimezoneInfoOperation"
+G_NAME_GROUP_CLOCK_OPERATION = "default"
+
+

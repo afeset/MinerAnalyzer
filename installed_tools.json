@@ -1,0 +1,7 @@
+{
+    "excel": {
+        "path": "dev/miner/excel/toolbox", 
+        "version": "2.0.0", 
+        "build": "30352"
+    }
+}

@@ -1,0 +1,179 @@
+#import json
+#import tempfile
+#import os.path
+import subprocess
+import mysql.connector
+import datetime
+from time import strftime
+from datetime import datetime
+
+from HttpObjects import *   #, ReqParam
+
+class sqlDump:
+    def __init__(self, fileName, variableNames, **moreParams):
+        #At some point make the option to connect to a specific DB with specific username and password such as 
+        #self.login=moreParams["login"]
+        self.filename=fileName
+        #self.password
+        #Set Object's indexes in varableNames
+        self.coalIndex = variableNames.index("coal")
+        self.requestIndex = variableNames.index("request")
+        self.responseIndex = variableNames.index("response")     
+        #Set Connection info            
+        self.cnx = mysql.connector.connect(user='root', password='1234',host='127.0.0.1',database='Project')
+        #Run one sql query at init stage
+        cursor = self.cnx.cursor()
+        cursor.execute("SELECT max(ID) FROM Transactions")
+        max_trans_id=cursor.fetchone()
+        self.max_trans_id=max_trans_id[0]
+        if self.max_trans_id==None:
+            self.max_trans_id=1;
+        cursor.execute("SELECT max(ID) FROM Flow")
+        max_flow_id=cursor.fetchone()
+        self.max_flow_id=max_flow_id[0]
+        if self.max_flow_id==None:
+            self.max_flow_id=0
+        #Lists creation
+        self.transList=[]
+        self.requestList=[]
+        self.reponseList=[]
+        self.paramsList=[]
+        # ID's settings=>If needed we can create count indexes for object's ID's
+        self.transCount=1;
+    def save(self,record):
+        #cnx = mysql.connector.connect(user='root', password='1234',host='127.0.0.1',database='Project')
+        
+        print("Max FLOW", self.max_flow_id)
+        #Retreive objects;
+        if self.coalIndex!=-1:
+            coal=record[self.coalIndex]
+        else:
+            coal='None'
+        if self.requestIndex!=-1:
+            request=record[self.requestIndex]
+        else:
+            request='None'
+        if self.responseIndex!=-1:
+            response=record[self.responseIndex]
+        else:
+            response='None'
+        
+        #Create Objects:
+    
+        #Transactions object ('trans'):
+        trans_time=datetime.fromtimestamp(int(coal.unixTime)).strftime('%Y-%m-%d %H:%M:%S')
+        cgid=coal.decoding.cgid
+        cid=coal.decoding.cid
+        sitename='Static-YOUTUBE'
+        duration=coal.DurationMili
+        client_ip=coal.flow.clientIP.text
+        client_dest_port=coal.flow.clientPort
+        server_ip=coal.flow.serverIP.text
+        server_dest_port=coal.flow.serverPort
+        checksum=coal.decoding.checksum1k10k
+        
+        #flows=Flow.Flow(self.max_flow_id+1,d)
+        #flowlist.append(flows)
+        
+        trans=Transaction.Transaction((),trans_time,cgid, cid, sitename, duration, client_ip, client_dest_port, server_ip, server_dest_port, checksum, self.max_flow_id+1, coal.numDownloadedBytes)
+        
+   
+        #Requests object:
+        # requests=Request.Request((),self.max_trans_id,request.httpVersion,request.method)
+        Req_ID=self.max_trans_id+self.transCount #This will change when using pipline
+        trans.requests=Request.Request((),request.httpVersion,self.max_trans_id+self.transCount,request.method) #When pipeline is added use len(self.transList)+1 instead of transcount
+        print("Trans_ID: ", self.max_trans_id+len(self.transList))
+        #trans.requestList.append(req) ----might be needed with pipline
+        for (name,value) in request.params.iteritems ():
+            trans.requests.params=ReqParam.ReqParam((),Req_ID,dict(name,value))
+        self.transList.append(trans)
+        
+#        if t[0]==None:
+#            t1=len(translist);
+#        else:
+#            t1=t[0]+len(translist)
+#--------------------       RESPONSE-------------------------------------------------------- 
+        trans.responses=Response.Response((),self.max_trans_id+self.transCount,response.statusCode)
+        self.reponseList.append(object)
+        
+        print(self.transCount)
+        self.transCount=self.transCount+1
+        '''
+        
+        #INSERT TO DB
+        
+        #Dummy insertion:
+        
+
+        cursor.execute("SELECT max(ID) FROM Flow")
+        max_flow_id=cursor.fetchone()
+        max_flow_id=max_flow_id[0]
+        print(cgid, cid, sitename, duration, client_ip, client_dest_port, server_ip, server_dest_port, checksum, max_flow_id, coal.numDownloadedBytes)
+        add_transactions=("INSERT INTO Transactions "
+                   "(ID, Transaction_time, cgid, cid, site_signature_name, duration, Client_IP, Client_Dest_Port, Server_IP, Server_Dest_Port, checksum, Flow_ID, NumDownloadedBytes) "
+                   "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+        data_requests=( cursor.lastrowid, trans_time,cgid, cid, sitename, duration, client_ip, client_dest_port, server_ip, server_dest_port, checksum, max_flow_id, coal.numDownloadedBytes)
+        cursor.execute(add_transactions, data_requests)
+        #Need to insert response as well, and flow, transactions,etc
+        '''
+
+        '''
+#        self.cnx.commit()
+#        self.cnx.close()
+#        cursor.close()
+#        self.cnx.close()
+        cnx.commit()
+        cnx.close()
+        cursor.close()
+        cnx.close()
+        '''
+    def close(self):
+        cursor = self.cnx.cursor()
+        add_flow_dummy=("INSERT INTO Flow "
+                "(ID, System_date) "
+                 "VALUES (%s,%s)")
+        flow_data=(self.max_flow_id+1, datetime.now()) 
+        cursor.execute(add_flow_dummy,flow_data)
+        #self.cnx.commit()
+        for i in range(0, len(self.transList)):
+            add_transactions=("INSERT INTO Transactions "
+               "(Transaction_time, cgid, cid, site_signature_name, duration, Client_IP, Client_Dest_Port, Server_IP, Server_Dest_Port, checksum, Flow_ID, NumDownloadedBytes) "
+               "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+            data_transactions=( self.transList[i].Transaction_time, self.transList[i].cgid, self.transList[i].cid, self.transList[i].site_signature_name, self.transList[i].duration, self.transList[i].Client_IP, self.transList[i].Client_Dest_Port, self.transList[i].Server_IP, self.transList[i].Server_Dest_Port, self.transList[i].checksum, self.transList[i].Flow_ID, self.transList[i].NumDownloadedBytes)
+            cursor.execute(add_transactions, data_transactions)
+            ###TEMP
+            cursor.execute("SELECT max(ID) FROM Transactions")
+            max_trans_id_temp=cursor.fetchone()
+            max_trans_id_temp=max_trans_id_temp[0]
+            print("Transaction-ID: ", max_trans_id_temp)
+            print ("BLABLABLABLALBAL!@!@!@!@!@!@!@$@$!#!@#@#%@##!@@#%$")
+            ###END TEMP
+            add_requests=("INSERT INTO Requests "
+                   "(Transactions_ID, http_version, method) "
+                   "VALUES (%s, %s, %s)")
+            print("Requests-Trans_ID: " ,(self.transList[i].requests.Transactions_ID))
+            data_requests=( self.transList[i].requests.Transactions_ID,self.transList[i].requests.http_version,self.transList[i].requests.method)
+            cursor.execute(add_requests, data_requests)
+            
+           
+            
+            '''#Handle requests-params table:
+            add_req_params=("INSERT INTO `Requests-Params` "
+               "(Request_ID, Value, Name_request_param) "
+               "VALUES (%s, %s, %s)")
+            
+            for (name,value) in Request.params.iteritems ():
+                data_req_params=(r1, value, name)
+                cursor.execute(add_req_params, data_req_params)'''
+      
+            #Handle Responses insertion
+            add_responses=("INSERT INTO Responses "
+                   "(Transactions_ID, Response_Code) "
+                   "VALUES (%s, %s)")
+            data_responses=(self.transList[i].responses.Transactions_ID, self.transList[i].responses.Response_Code)
+            cursor.execute(add_responses, data_responses)
+                    
+        
+        self.cnx.commit()
+        cursor.close()
+        self.cnx.close()
