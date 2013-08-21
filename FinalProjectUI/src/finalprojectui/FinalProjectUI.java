@@ -25,22 +25,27 @@ public class FinalProjectUI {
         PythonInterpreter interpreter = new PythonInterpreter(null, new PySystemState());
 
         PySystemState sys = Py.getSystemState();
-        sys.path.append(new PyString("C:\\Users\\dell\\Documents\\GitHub\\Finalproject\\FinalProject\\src"));
+        sys.path.append(new PyString("C:\\Users\\dell\\Documents\\GitHub\\MinerAnalyzer\\MinerAnalyzer"));
        // sys.path.append(new PyString("/home/asaf/workspace/FinalProject/mysql-connector-java-5.1.26"));
         //PythonInterpreter interpreter=new PythonInterpreter();
       //  interpreter.execfile("/home/asaf/workspace/FinalProject/src/Configuration/Config.py");
         //interpreter.execfile("/home/asaf/workspace/FinalProject/src/Queries and Reports/Reports/RquestsUserAgentPercentageReport.py");
-        interpreter.execfile("C:\\Users\\dell\\Documents\\GitHub\\Finalproject\\FinalProject\\src\\DAL\\Test2.py");
+        interpreter.execfile("C:\\Users\\dell\\Documents\\GitHub\\MinerAnalyzer\\MinerAnalyzer\\DAL\\Test2.py");
         //interpreter.execfile("C:\\Users\\dell\\Documents\\GitHub\\Finalproject\\FinalProject\\src\\Reports\\RequestsPercentagePerHeaderReport.py");
         
         
         //PyObject result = interpreter.eval("RquestsUserAgentPercentageReport().loadResults()");
         //PyObject result2 = interpreter.eval("RquestsUserAgentPercentageReport().PrintReportResults()");
         //PyObject result2 = interpreter.eval("RequestsPercentagePerHeaderReport(1,1,1).loadResults()");
-        PyObject result2 = interpreter.eval("Test2().run()");
-        
+        //PyObject result2 = interpreter.eval("Test2().run()");
+        PyList result2 = (PyList) interpreter.eval("Test2().run()");
+        PyObject[] arr=result2.getArray();
+        for(int i=0; i<arr.length; i++)
+        {
+            System.out.println(arr[i].__getattr__("key"));
+        }
         //System.out.println(result2.__getattr__("key"));
-        result2.invoke("Bla", new PyInteger(5));
+        //result2.invoke("Bla", new PyInteger(5));
         //System.out.println(result2.__getattr__("key"));
        // PyObject result3 = interpreter.eval(result2, PrintReportResults()");
         //System.out.println(result.toString());

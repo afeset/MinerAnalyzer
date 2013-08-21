@@ -4,6 +4,13 @@
  */
 package finalprojectui;
 
+import finalprojectui.Reports.RequestsPercentagePerHeaderReportPanel;
+import java.awt.Dialog;
+import java.awt.Image;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
 /**
@@ -11,15 +18,26 @@ import javax.swing.border.LineBorder;
  * @author dell
  */
 public class MainPanel extends javax.swing.JPanel {
-
+    private ReportType lastSelectedReport;
+    private JFrame _parentFrame;
     /**
      * Creates new form MainPanel
      */
     public MainPanel() {
         initComponents();
-        //addReportButton.setBorder(LineBorder.createGrayLineBorder());
+        
+        ImageIcon icon=(ImageIcon) addReportButton.getIcon();
+        addReportButton.setIcon(icon);
     }
-
+    
+    public MainPanel(JFrame parentFrame) {
+        initComponents();
+        
+        ImageIcon icon=(ImageIcon) addReportButton.getIcon();
+        addReportButton.setIcon(icon);
+        _parentFrame=parentFrame;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -31,30 +49,76 @@ public class MainPanel extends javax.swing.JPanel {
 
         toolBar = new javax.swing.JToolBar();
         addReportButton = new javax.swing.JButton();
+        saveReportButton = new javax.swing.JButton();
+        reportsTabPanel = new javax.swing.JTabbedPane();
 
+        toolBar.setBackground(new java.awt.Color(255, 255, 255));
+        toolBar.setFloatable(false);
+        toolBar.setForeground(new java.awt.Color(255, 255, 255));
         toolBar.setRollover(true);
 
-        addReportButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/finalprojectui/Images/report-new.png"))); // NOI18N
+        addReportButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/finalprojectui/Images/addReportIcon.png"))); // NOI18N
         addReportButton.setFocusable(false);
         addReportButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         addReportButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        addReportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addReportButtonActionPerformed(evt);
+            }
+        });
         toolBar.add(addReportButton);
+
+        saveReportButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/finalprojectui/Images/saveReportIcon.png"))); // NOI18N
+        saveReportButton.setFocusable(false);
+        saveReportButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        saveReportButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolBar.add(saveReportButton);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(toolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(reportsTabPanel)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(toolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 275, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(reportsTabPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void addReportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addReportButtonActionPerformed
+        ReportSelectionDialog selectionFrame=new ReportSelectionDialog(_parentFrame, true, this);
+        selectionFrame.show();
+        openNewReportTab();
+        
+    }//GEN-LAST:event_addReportButtonActionPerformed
+
+    private void openNewReportTab()
+    {
+        reportsTabPanel.add(lastSelectedReport.name()+" ("+reportsTabPanel.getTabCount()+")", new RequestsPercentagePerHeaderReportPanel());
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addReportButton;
+    private javax.swing.JTabbedPane reportsTabPanel;
+    private javax.swing.JButton saveReportButton;
     private javax.swing.JToolBar toolBar;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * @return the lastSelectedReport
+     */
+    public ReportType getLastSelectedReport() {
+        return lastSelectedReport;
+    }
+
+    /**
+     * @param lastSelectedReport the lastSelectedReport to set
+     */
+    public void setLastSelectedReport(ReportType lastSelectedReport) {
+        this.lastSelectedReport = lastSelectedReport;
+    }
 }

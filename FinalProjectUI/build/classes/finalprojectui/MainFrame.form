@@ -4,12 +4,24 @@
   <NonVisualComponents>
     <Menu class="javax.swing.JMenuBar" name="menuBar">
       <SubComponents>
-        <Menu class="javax.swing.JMenu" name="jMenu1">
+        <Menu class="javax.swing.JMenu" name="fileMenu">
           <Properties>
             <Property name="text" type="java.lang.String" value="File"/>
           </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="openCoalFileItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Open coal file..."/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="exitItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Exit"/>
+              </Properties>
+            </MenuItem>
+          </SubComponents>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="jMenu2">
+        <Menu class="javax.swing.JMenu" name="editMenu">
           <Properties>
             <Property name="text" type="java.lang.String" value="Edit"/>
           </Properties>

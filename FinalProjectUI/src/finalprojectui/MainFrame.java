@@ -5,6 +5,8 @@
 package finalprojectui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import javax.swing.JFrame;
 
 /**
@@ -18,11 +20,13 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {
         initComponents();
-//        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-//        this.setLayout(new BorderLayout(0,0));
-//        this.add(new ColeFilesPanel(), BorderLayout.LINE_START);
+        this.setTitle("MinerAnalyzer");
+        
+        //set the frame to fit he screen size
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        
         mainSplitPanel.setLeftComponent(new ColeFilesPanel());
-        mainSplitPanel.setRightComponent(new MainPanel());
+        mainSplitPanel.setRightComponent(new MainPanel(this));
 
     }
 
@@ -37,16 +41,25 @@ public class MainFrame extends javax.swing.JFrame {
 
         mainSplitPanel = new javax.swing.JSplitPane();
         menuBar = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
+        fileMenu = new javax.swing.JMenu();
+        openCoalFileItem = new javax.swing.JMenuItem();
+        exitItem = new javax.swing.JMenuItem();
+        editMenu = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jMenu1.setText("File");
-        menuBar.add(jMenu1);
+        fileMenu.setText("File");
 
-        jMenu2.setText("Edit");
-        menuBar.add(jMenu2);
+        openCoalFileItem.setText("Open coal file...");
+        fileMenu.add(openCoalFileItem);
+
+        exitItem.setText("Exit");
+        fileMenu.add(exitItem);
+
+        menuBar.add(fileMenu);
+
+        editMenu.setText("Edit");
+        menuBar.add(editMenu);
 
         setJMenuBar(menuBar);
 
@@ -106,9 +119,11 @@ public class MainFrame extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu editMenu;
+    private javax.swing.JMenuItem exitItem;
+    private javax.swing.JMenu fileMenu;
     private javax.swing.JSplitPane mainSplitPanel;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenuItem openCoalFileItem;
     // End of variables declaration//GEN-END:variables
 }
