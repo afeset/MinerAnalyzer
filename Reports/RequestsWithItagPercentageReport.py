@@ -3,8 +3,15 @@ Created on Jun 1, 2013
 
 @author: asaf
 '''
-#This query returns the percentage of itag values from all transactions:
+#This Report returns the percentage of itag values from all transactions.
+#It first queries all the distinct values, and counts their appearances.
+#Then, it calculates their percentage in terms of transactions and in terms of bytes.
+#loadResults method runs the report.
+#GetCount, GetTransPer and GetBytesPer all return lists of the report results, accordingly.
+#PrintReportResults prints all results
+
 from DAL import ConnectorPool
+from Utils import Pair
 
 class RequestsWithItagPercentageReport:
     
@@ -16,6 +23,7 @@ class RequestsWithItagPercentageReport:
         self.percent_trans=0
         self.percent_bytes=0
         
+    #This method executes the actual report, i.e. sends query to DB and stores the results in self fields.
     def loadResults(self):
         cursor=ConnectorPool.ConnectorPool.GetConnector()
         #Get only distinct values of itag:
@@ -56,6 +64,28 @@ class RequestsWithItagPercentageReport:
  
         ConnectorPool.ConnectorPool.CloseConnector()
         
+    #This method returns the count of distinct itag appearances in DB        
+    def GetCount(self) :
+        count=[] #Will store count results
+        for i in range (0, len(self.distinct)):
+            count.append(Pair.Pair(self.distinct[i], self.count[i]))
+        return count
+    
+    #This method returns the percentage of trans. with distinct itag values, out of all trans.
+    def GetTransPer(self) :
+        trans_per=[] #Will store percentage results in terms of transaction
+        for i in range (0, len(self.distinct)) :
+            trans_per.append(Pair.Pair(self.distinct[i], self.percent_trans[i]))
+        return trans_per
+    
+    #This method returns the percentage of bytes with distinc itag values, out of all trans.
+    def GetBytesPer(self) :
+        bytes_per=[] #Will store percentage results in terms of transaction
+        for i in range (0, len(self.distinct)) :
+            bytes_per.append(Pair.Pair(self.distinct[i], self.percent_bytes[i]))
+        return bytes_per
+    
+    #This method simply prints all of the report results    
     def PrintReportResults(self):
         print("====== RequestsWithItagPercentageReport START ======")
         print("itag Statistics:\n")
@@ -72,7 +102,17 @@ class RequestsWithItagPercentageReport:
         print(self.percent_bytes)
         print("====== RequestsWithItagPercentageReport END ======\n")
         
-#Test - moved to Tests package
+#Test:
 r=RequestsWithItagPercentageReport(1,1)
 r.loadResults()
+r1=r.GetCount()
+for i in range (0, len(r1)) :
+    print ("Key_"+str(i)+": "+str(r1[i].key)+"    Value_"+str(i)+": "+str(r1[i].value))
+r1=r.GetTransPer()
+for i in range (0, len(r1)) :
+    print ("Key_"+str(i)+": "+str(r1[i].key)+"    Value_"+str(i)+": "+str(r1[i].value))
+r1=r.GetBytesPer()
+for i in range (0, len(r1)) :
+    print ("Key_"+str(i)+": "+str(r1[i].key)+"    Value_"+str(i)+": "+str(r1[i].value))
+
 r.PrintReportResults()
