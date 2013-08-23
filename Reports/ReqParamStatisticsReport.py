@@ -4,9 +4,9 @@ Created on Jun 1, 2013
 @author: asaf
 '''
 #This query returns the percentage of requests with uri_param "begin", out of all requests in that coal file
-from DAL import UIConnectorPool
+from DAL import ConnectorPool
 
-class RequestsPercentagePerHeaderReport:
+class ReqParamStatisticsReport:
     
     def __init__(self, HeaderName, StartDate, EndDate):
         self.HeaderName=HeaderName
@@ -23,13 +23,13 @@ class RequestsPercentagePerHeaderReport:
         
     def loadResults(self):
         
-        cursor=UIConnectorPool.ConnectorPool.GetConnector()
+        cursor=ConnectorPool.ConnectorPool.GetConnector()
         #print("execute DB")
         #Percentage in terms of number of transactions:
         cursor.execute("SELECT COUNT(*) FROM `Transactions`")
         total=cursor.fetchone()
         if total[0] == 0 :
-            result = "***Empty Database - Cannot complete RequestsPercentagePerHeaderReport.loadResults***\n"
+            result = "***Empty Database - Cannot complete ReqParamStatisticsReport.loadResults***\n"
             return result
             print (result)
         else:
@@ -52,7 +52,7 @@ class RequestsPercentagePerHeaderReport:
             self.RequestsWithBeginEqZeroTrans=100*(float(count[0])/float(total[0]))
                 
             #Percentage only of begin=0, bytes:
-            cursor.execute("SELECT SUM(NumDownloadedBytes) FROM Transactions WHERE ID=(select Transactions_ID from Requests where Req_ID=(select Request_ID from `Requests-Params` where Name_request_param='begin' and Value='0'))")
+            cursor.execute("SELECT SUM(NumDownloadedBytes) FROM Transactions WHERE ID=ANY(select Transactions_ID from Requests where Req_ID=ANY(select Request_ID from `Requests-Params` where Name_request_param='begin' and Value='0'))")
             sum_of_bytes_begin=cursor.fetchone()
             self.RequestsWithBeginEqZeroBytes=100*float(int(sum_of_bytes_begin[0] or 0))/float(sum_of_bytes_total[0])
             
@@ -66,11 +66,10 @@ class RequestsPercentagePerHeaderReport:
             sum_of_bytes_begin=cursor.fetchone()
             self.RequestsWithBeginNotEqZeroBytes=100*float(int(sum_of_bytes_begin[0] or 0))/float(sum_of_bytes_total[0])
         
-            UIConnectorPool.ConnectorPool.CloseConnector()
-            self.PrintReportResults()
+            ConnectorPool.ConnectorPool.CloseConnector()
         
     def PrintReportResults(self):  
-        print("===== RequestsPercentagePerHeaderReport START ======")
+        print("===== ReqParamStatisticsReport START ======")
           
         print("Percentage of Requests with 'begin' URI param (all values):")
         print("In terms of number of transactions:")
@@ -106,8 +105,8 @@ class RequestsPercentagePerHeaderReport:
         print("====== RequestPercentagePerHeaderReport END ======\n")
         
 #Test - moved to Tests Package        
-#r=RequestsPercentagePerHeaderReport(1,1,1)
-#r.loadResults()
-#r.PrintReportResults()       
+r=ReqParamStatisticsReport(1,1,1)
+r.loadResults()
+r.PrintReportResults()       
 
 

@@ -4,7 +4,7 @@ Created on Aug 15, 2013
 @author: asaf
 '''
 from DAL import *
-from Reports import RequestsPercentagePerHeaderReport
+from Reports import *
 from Tests import TestResult
 from Queries import TruncateDB
 from HttpObjects import *
@@ -28,10 +28,10 @@ class RequestsPercentagePerHeaderReportTests :
         #Clean DB:
         TruncateDB.TruncateDB()
         #Run the report:
-        r=RequestsPercentagePerHeaderReport.RequestsPercentagePerHeaderReport(1,1,1)
+        r=ReqParamStatisticsReport.ReqParamStatisticsReport(1,1,1)
         r1=r.loadResults()
         #Make sure correct message is shown
-        if(r1 != "***Empty Database - Cannot complete RequestsPercentagePerHeaderReport.loadResults***\n"):
+        if(r1 != "***Empty Database - Cannot complete ReqParamStatisticsReport.loadResults***\n"):
             result.append(TestResult.TestResult(False, "RequestsPercentagePerHeaderReportTests : Part1 - Test Empty DB : fail"))
         else:
             result.append(TestResult.TestResult(True, "RequestsPercentagePerHeaderReportTests : Part1 - Test Empty DB : pass"))

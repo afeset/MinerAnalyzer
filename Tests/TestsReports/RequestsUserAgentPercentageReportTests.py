@@ -4,7 +4,7 @@ Created on Aug 15, 2013
 @author: asaf
 '''
 from DAL import *
-from Reports import RequestsUserAgentPercentageReport
+from Reports import *
 from HttpObjects.HTTP_Constants import UserAgent
 from Tests import TestResult
 from Queries import TruncateDB
@@ -29,10 +29,10 @@ class RequestsUserAgentPercentageReportTests :
         #Clean DB:
         TruncateDB.TruncateDB()
         #Run the report:
-        r=RequestsUserAgentPercentageReport.RequestsUserAgentPercentageReport(1,1,1)
+        r=UseAgentStatisticsReport.UseAgentStatisticsReport(1,1,1)
         r1=r.loadResults()
         #Make sure correct message is shown
-        if(r1 != "***Empty Database - Cannot complete RequestsUserAgentPercentageReport.loadResults***\n"):
+        if(r1 != "***Empty Database - Cannot complete UseAgentStatisticsReport.loadResults***\n"):
             result.append(TestResult.TestResult(False, "RequestsUserAgentPercentageReportTests : Part1 - Test Empty DB : fail"))
         else:
             result.append(TestResult.TestResult(True, "RequestsUserAgentPercentageReportTests : Part1 - Test Empty DB : pass"))

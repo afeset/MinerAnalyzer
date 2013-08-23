@@ -3,7 +3,7 @@ Created on Aug 18, 2013
 
 @author: asaf
 '''
-
+'''
 from com.ziclix.python.sql import zxJDBC 
 from Configuration.Config import Config
 
@@ -35,3 +35,4 @@ class ConnectorPool:
             ConnectorPool.connection.close()
             ConnectorPool.connection=0   
 
+'''
