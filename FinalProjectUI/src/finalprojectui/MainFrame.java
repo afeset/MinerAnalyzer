@@ -7,14 +7,18 @@ package finalprojectui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import javax.swing.JFrame;
+import java.io.File;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
  * @author dell
  */
 public class MainFrame extends javax.swing.JFrame {
-
+    private MainPanel _mainPanel;
+    private CoalFilesPanel _coalsPanel;
     /**
      * Creates new form MainFrame
      */
@@ -25,8 +29,15 @@ public class MainFrame extends javax.swing.JFrame {
         //set the frame to fit he screen size
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         
-        mainSplitPanel.setLeftComponent(new ColeFilesPanel());
-        mainSplitPanel.setRightComponent(new MainPanel(this));
+        _coalsPanel=new CoalFilesPanel();
+        mainSplitPanel.setLeftComponent(_coalsPanel);
+        _mainPanel=new MainPanel(this);
+        mainSplitPanel.setRightComponent(_mainPanel);
+        
+        loadCoalFileButton.setToolTipText("Load coal files");
+        removeCoalFileButton.setToolTipText("Remove coal files");
+        addReportButton.setToolTipText("Run new report");
+        saveReportButton.setToolTipText("Save report");
 
     }
 
@@ -40,26 +51,109 @@ public class MainFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         mainSplitPanel = new javax.swing.JSplitPane();
+        toolBar = new javax.swing.JToolBar();
+        loadCoalFileButton = new javax.swing.JButton();
+        removeCoalFileButton = new javax.swing.JButton();
+        addReportButton = new javax.swing.JButton();
+        saveReportButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openCoalFileItem = new javax.swing.JMenuItem();
+        removeCoalFilesItem = new javax.swing.JMenuItem();
         exitItem = new javax.swing.JMenuItem();
-        editMenu = new javax.swing.JMenu();
+        reportsMenu = new javax.swing.JMenu();
+        runReportItem = new javax.swing.JMenuItem();
+        saveReportItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        toolBar.setBackground(new java.awt.Color(255, 255, 255));
+        toolBar.setFloatable(false);
+        toolBar.setForeground(new java.awt.Color(255, 255, 255));
+        toolBar.setRollover(true);
+
+        loadCoalFileButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/finalprojectui/Images/addCoalFile.png"))); // NOI18N
+        loadCoalFileButton.setToolTipText("");
+        loadCoalFileButton.setFocusable(false);
+        loadCoalFileButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        loadCoalFileButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        loadCoalFileButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadCoalFileButtonActionPerformed(evt);
+            }
+        });
+        toolBar.add(loadCoalFileButton);
+
+        removeCoalFileButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/finalprojectui/Images/removeCoalFile.png"))); // NOI18N
+        removeCoalFileButton.setFocusable(false);
+        removeCoalFileButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        removeCoalFileButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        removeCoalFileButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeCoalFileButtonActionPerformed(evt);
+            }
+        });
+        toolBar.add(removeCoalFileButton);
+
+        addReportButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/finalprojectui/Images/addReportIcon.png"))); // NOI18N
+        addReportButton.setFocusable(false);
+        addReportButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        addReportButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        addReportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addReportButtonActionPerformed(evt);
+            }
+        });
+        toolBar.add(addReportButton);
+
+        saveReportButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/finalprojectui/Images/saveReportIcon.png"))); // NOI18N
+        saveReportButton.setFocusable(false);
+        saveReportButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        saveReportButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolBar.add(saveReportButton);
+
         fileMenu.setText("File");
 
-        openCoalFileItem.setText("Open coal file...");
+        openCoalFileItem.setText("Load coal files...");
+        openCoalFileItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openCoalFileItemActionPerformed(evt);
+            }
+        });
         fileMenu.add(openCoalFileItem);
 
+        removeCoalFilesItem.setText("Remove selected coal files");
+        removeCoalFilesItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeCoalFilesItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(removeCoalFilesItem);
+
         exitItem.setText("Exit");
+        exitItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitItemActionPerformed(evt);
+            }
+        });
         fileMenu.add(exitItem);
 
         menuBar.add(fileMenu);
 
-        editMenu.setText("Edit");
-        menuBar.add(editMenu);
+        reportsMenu.setText("Edit");
+
+        runReportItem.setText("Run new report");
+        runReportItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                runReportItemActionPerformed(evt);
+            }
+        });
+        reportsMenu.add(runReportItem);
+
+        saveReportItem.setText("Save report");
+        reportsMenu.add(saveReportItem);
+
+        menuBar.add(reportsMenu);
 
         setJMenuBar(menuBar);
 
@@ -67,16 +161,150 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainSplitPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(mainSplitPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainSplitPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(toolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(mainSplitPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void addReportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addReportButtonActionPerformed
+        addNewReportAction();
+    }//GEN-LAST:event_addReportButtonActionPerformed
+
+    private void loadCoalFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadCoalFileButtonActionPerformed
+        loadCoalFilesAction();
+    }//GEN-LAST:event_loadCoalFileButtonActionPerformed
+
+    
+    private void removeCoalFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeCoalFileButtonActionPerformed
+        removeCoalFilesAtion();
+    }//GEN-LAST:event_removeCoalFileButtonActionPerformed
+
+    private void openCoalFileItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openCoalFileItemActionPerformed
+        loadCoalFilesAction();
+    }//GEN-LAST:event_openCoalFileItemActionPerformed
+
+    private void removeCoalFilesItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeCoalFilesItemActionPerformed
+        removeCoalFilesAtion();
+    }//GEN-LAST:event_removeCoalFilesItemActionPerformed
+
+    private void runReportItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runReportItemActionPerformed
+        addNewReportAction();
+    }//GEN-LAST:event_runReportItemActionPerformed
+
+    private void exitItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitItemActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_exitItemActionPerformed
+
+    //return the id of the loaded coal file.
+    private int loadCoalFile(String filePath)
+    {
+        //TODO: need to implelent
+        return 0;
+    
+    }
+    
+    private void loadCoalFilesAction()
+    {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setMultiSelectionEnabled(true);
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "QBL files", "qbl");
+        chooser.setFileFilter(filter);
+        int returnVal = chooser.showOpenDialog(this);
+        int nonCoalFiles=0;
+        int filesExists=0;
+
+        File[] selectedCoalFiles = chooser.getSelectedFiles();
+        for(File f : selectedCoalFiles)
+        {
+            String selectedCoalFile=f.getAbsolutePath();
+            if (selectedCoalFile.endsWith("qbl")) {
+                boolean exists=_coalsPanel.isFileExist(selectedCoalFile);
+                if(!exists)
+                {
+                    int id=loadCoalFile(selectedCoalFile);
+                    _coalsPanel.addCoalFileToList(id,selectedCoalFile);
+                }
+                else
+                {
+                    filesExists++;
+                }
+            }
+            else {
+                nonCoalFiles++;
+            }
+        }
+        if(nonCoalFiles>0)
+        {
+            JOptionPane.showMessageDialog(null,
+                        "Some files were not qbl files and were not loaded.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+        }
+        if(filesExists>0)
+        {
+            JOptionPane.showMessageDialog(null,
+                            "Some coal file already exists and were not loaded again.",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void removeCoalFilesAtion()
+    {
+        List<String> selectedFiles=_coalsPanel.getCurrentSelectedFiles();
+        //check if a file was selected
+        if(selectedFiles.size()==0)
+        {
+            JOptionPane.showMessageDialog(null,
+                        "No coal file was selected.\nPlease select a coal file to remove",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+        }
+        else
+        {
+            Object[] options = { "OK", "Cancel" };
+            int selection=JOptionPane.showOptionDialog(this,
+                        "Are you sure you want to remove coal files?",
+                        "",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,null, options, options[0]);
+            //user approved remove
+            if(selection==JOptionPane.OK_OPTION)
+            {
+                boolean res=_coalsPanel.removeCoalFiles();
+                if(res)
+                {
+                    JOptionPane.showMessageDialog(null,
+                                "Files were removed successfully",
+                                "File removed",
+                                JOptionPane.INFORMATION_MESSAGE);
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null,
+                                "An error occured when removing the file.\nPlease try again.",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+    }
+    
+    private void addNewReportAction()
+    {
+        ReportSelectionDialog selectionFrame = new ReportSelectionDialog(this, true, _mainPanel);
+        selectionFrame.show();
+        _mainPanel.openNewReportTab();
+    }
     /**
      * @param args the command line arguments
      */
@@ -119,11 +347,19 @@ public class MainFrame extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenu editMenu;
+    private javax.swing.JButton addReportButton;
     private javax.swing.JMenuItem exitItem;
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JButton loadCoalFileButton;
     private javax.swing.JSplitPane mainSplitPanel;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openCoalFileItem;
+    private javax.swing.JButton removeCoalFileButton;
+    private javax.swing.JMenuItem removeCoalFilesItem;
+    private javax.swing.JMenu reportsMenu;
+    private javax.swing.JMenuItem runReportItem;
+    private javax.swing.JButton saveReportButton;
+    private javax.swing.JMenuItem saveReportItem;
+    private javax.swing.JToolBar toolBar;
     // End of variables declaration//GEN-END:variables
 }
