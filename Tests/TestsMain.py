@@ -17,8 +17,8 @@ testresult=[]
 
 test1 = RequestsPercentagePerHeaderReportTests.RequestsPercentagePerHeaderReportTests().RunTests()
 testresult.extend(test1)
-test2 = RequestsUserAgentPercentageReportTests.RequestsUserAgentPercentageReportTests().RunTests()
-testresult.extend(test2)
+#test2 = RequestsUserAgentPercentageReportTests.RequestsUserAgentPercentageReportTests().RunTests()
+#testresult.extend(test2)
 test3 = RequestsWithItagPercentageReportTests.RequestsWithItagPercentageReportTests().RunTests()
 testresult.extend(test3)
 

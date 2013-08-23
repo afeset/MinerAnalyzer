@@ -4,7 +4,7 @@ Created on Aug 15, 2013
 @author: asaf
 '''
 from DAL import *
-from Reports import RequestsWithItagPercentageReport
+from Reports import *
 from HttpObjects.HTTP_Constants import UserAgent
 from Tests import TestResult
 from Queries import TruncateDB
@@ -30,10 +30,10 @@ class RequestsWithItagPercentageReportTests :
         #Clean DB:
         TruncateDB.TruncateDB()
         #Run the report:
-        r=RequestsWithItagPercentageReport.RequestsWithItagPercentageReport(1,1)
+        r=ItagStatisticsReport.ItagStatisticsReport(1,1)
         r1=r.loadResults()
         #Make sure correct message is shown
-        if(r1 != "***Empty Database - Cannot complete RequestsWithItagPercentageReport.loadResults***\n"):
+        if(r1 != "***Empty Database - Cannot complete ItagStatisticsReport.loadResults***\n"):
             result.append(TestResult.TestResult(False, "RequestsWithItagPercentageReportTests : Part1 - Test Empty DB : fail"))
         else:
             result.append(TestResult.TestResult(True, "RequestsWithItagPercentageReportTests : Part1 - Test Empty DB : pass"))
