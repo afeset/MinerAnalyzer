@@ -3,7 +3,7 @@ Created on Jun 1, 2013
 
 @author: asaf
 '''
-#This Report returns the percentage of itag values from all transactions.
+#This Report class returns the percentage of itag values from all transactions.
 #It first queries all the distinct values, and counts their appearances.
 #Then, it calculates their percentage in terms of transactions and in terms of bytes.
 #loadResults method runs the report.
@@ -15,11 +15,10 @@ from Utils import Pair
 
 class ItagStatisticsReport:
     
-    def __init__(self, StartDate, EndDate):
-        self.StartDate=StartDate
-        self.EndDate=EndDate
+    def __init__(self):
         self.distinct=0
         self.count=0
+        self.bytes=0
         self.percent_trans=0
         self.percent_bytes=0
         
@@ -27,67 +26,86 @@ class ItagStatisticsReport:
     def loadResults(self, Flow_ID=0):
         #Connect:
         cursor=ConnectorPool.ConnectorPool.GetConnector()
-        
-        self.count=[]
-        self.percent_trans=[]
-        self.percent_bytes=[]
-        self.distinct = []
-        i=0
-        max1_i=-1
-        max2_i=-1
-        max3_i=-1
-        
-        FlowList = []
-        if str(type(Flow_ID)) == "<type 'int'>" :
-            FlowList.append(Flow_ID)
-        else :
-            FlowList.extend(Flow_ID)
-
+        #Initiate variables:
+        self.count=[] #itag values counter
+        self.bytes =[] #itage bytes counter
+        self.percent_trans=[] #trans. percentage results
+        self.percent_bytes=[] #bytes percentage results
+        self.distinct = [] #list of all distinct itag values 
+        max1_i=-1 #Indicator of distinct list length up to the current iteration
+        total = 0 #used to count all transactions
+        total_bytes = 0 #used to count all bytes
 
         #Query according to Flow_ID. IF not supplied, run on whole DB. IF supplied, Query from Flow_ID list only.
-        if Flow_ID != 0:
-            for k in range (0, len(FlowList)) :
+        if Flow_ID != 0: #Query according to Flow_ID list
+            #Create a list from the input.
+            #The query to the DB uses a list, and so if a single integer ID is supplied, we create a list out of it:
+            FlowList = []
+            if str(type(Flow_ID)) == "<type 'int'>" :
+                FlowList.append(Flow_ID)
+            else :
+                FlowList.extend(Flow_ID)
+            for k in range (0, len(FlowList)) : #Iterate list (k index)
                 #Get only distinct values of itag:
                 cursor.execute("SELECT DISTINCT(Value) FROM `Requests-Params` WHERE (Name_request_param='itag') AND (Request_ID = any(select Req_ID from Requests WHERE Transactions_ID = any(select ID from Transactions WHERE Flow_ID="+str(FlowList[k])+")))")
-                self.distinct.extend(cursor.fetchall())
+                fetch=cursor.fetchall()
+                for l in range (0, len(fetch)):
+                    fetch2= fetch[l]
+                    fetch2=str(fetch2)[3:-3] #Omit redundant characters returned from MySQL 
+                    fetch2=int(fetch2) #Convert to int
+                    if fetch2 in self.distinct :
+                        pass
+                    else:
+                        self.distinct.append(fetch[l]) #Add to distinct values list only if not already there...
                 
                 #Omit redundant characters from results and count occurrences of each distinct itag value:
-                for i in range (max1_i+1, len(self.distinct)):
-                    self.distinct[i]=(str(self.distinct[i]))[3:-3]
-                    self.distinct[i]=int(self.distinct[i]) #Need to find out how to recognize relevant characters
-                    cursor.execute("SELECT COUNT(*) from `Requests-Params` where Name_request_param='itag' AND Value="+str(self.distinct[i])+" AND Request_ID = any(select Req_ID from Requests WHERE Transactions_ID = any(select ID from Transactions WHERE Flow_ID="+str(FlowList[k])+"))")
-                    temp=cursor.fetchone()
-                    if temp[0] !=0 :
-                        self.count.append(temp[0])
-                max1_i = i
-                    
-                #Calculate percentage in terms of transactions:
-                cursor.execute("SELECT Count(*) FROM Transactions WHERE Flow_ID = "+str(FlowList[k]))
-                total=cursor.fetchone()
-                if total[0] == 0 :
-                    result ="***Empty Database - Cannot complete ItagStatisticsReport.loadResults***\n"
-                    return result
-                    print (result)
-                else : 
-                    for i in range (max2_i+1, len(self.count)):
-                        temp=100*float(self.count[i])/float(total[0])
-                        self.percent_trans.append(temp)
-                    max2_i = i
-                    
-                    #Calculate percentage in terms of bytes:
-                    cursor.execute("SELECT SUM(NumDownloadedBytes) FROM Transactions where Flow_ID = "+str(FlowList[k]))
-                    sum_of_bytes_total=cursor.fetchone()
-                    for i in range (max3_i+1, len(self.distinct)):
+                for i in range (0, len(self.distinct)):
+                    if i<=max1_i : #If distinct list already has values from previous iterations, modify them
+                        cursor.execute("SELECT COUNT(*) from `Requests-Params` where Name_request_param='itag' AND Value="+str(self.distinct[i])+" AND Request_ID = any(select Req_ID from Requests WHERE Transactions_ID = any(select ID from Transactions WHERE Flow_ID="+str(FlowList[k])+"))")
+                        temp=cursor.fetchone()
+                        if temp[0] != None :
+                            self.count[i] = self.count[i]+temp[0]
                         cursor.execute("SELECT SUM(NumDownloadedBytes) from Transactions where Flow_ID = "+str(FlowList[k])+" AND ID=ANY (SELECT Transactions_ID FROM Requests where Req_ID=ANY (SELECT Request_ID from `Requests-Params` where Name_request_param='itag' AND Value="+str(self.distinct[i])+"))")
                         temp1=cursor.fetchone()
-                        if temp1[0] == None :
-                            temp2 = 0;
-                        else :
-                            temp2 = temp1[0]
-                        temp3=100*float(temp2)/float(sum_of_bytes_total[0])
-                        self.percent_bytes.append(temp3)
-                    max3_i = i
+                        if temp1[0] != None :
+                            self.bytes[i] = self.bytes[i] +temp1[0]
+                    else : #update the values added to distinct list in this iteration
+                        self.distinct[i]=(str(self.distinct[i]))[3:-3]
+                        self.distinct[i]=int(self.distinct[i])
+                        cursor.execute("SELECT COUNT(*) from `Requests-Params` where Name_request_param='itag' AND Value="+str(self.distinct[i])+" AND Request_ID = any(select Req_ID from Requests WHERE Transactions_ID = any(select ID from Transactions WHERE Flow_ID="+str(FlowList[k])+"))")
+                        temp=cursor.fetchone()
+                        if temp[0] !=0 :
+                            self.count.append(temp[0])
+                        cursor.execute("SELECT SUM(NumDownloadedBytes) from Transactions where Flow_ID = "+str(FlowList[k])+" AND ID=ANY (SELECT Transactions_ID FROM Requests where Req_ID=ANY (SELECT Request_ID from `Requests-Params` where Name_request_param='itag' AND Value="+str(self.distinct[i])+"))")
+                        temp1=cursor.fetchone()
+                        if temp1[0] !=0 :
+                            self.bytes.append(temp1[0])
+                max1_i = i #Update the indicator
+                
+                #Get total number of transactions from all Flow_ID's and total number of bytes:
+                cursor.execute("SELECT Count(*) FROM Transactions WHERE Flow_ID = "+str(FlowList[k]))
+                total_temp = cursor.fetchone()
+                total= total + total_temp[0]
+                cursor.execute("SELECT SUM(NumDownloadedBytes) FROM Transactions where Flow_ID = "+str(FlowList[k]))
+                total_bytes_temp = cursor.fetchone()
+                if total_bytes_temp[0] != None :
+                    total_bytes = total_bytes + total_bytes_temp[0]
                     
+                ###End of for loop (k index)###
+            
+            #Calculate results:
+            if total == 0 :
+                result ="***Empty Database - Cannot complete ItagStatisticsReport.loadResults***\n"
+                return result
+                print (result)
+            else : 
+                for i in range (0, len(self.distinct)):
+                    temp=100*float(self.count[i])/float(total)
+                    self.percent_trans.append(temp)
+                    temp1 = 100*float(self.bytes[i])/float(total_bytes)
+                    self.percent_bytes.append(temp1)
+
+        ###End of if Flow_ID!=0 statement###
             
         else : #All Flow_ID's
             #Get only distinct values of itag:
@@ -125,7 +143,10 @@ class ItagStatisticsReport:
                     temp1=cursor.fetchone()
                     temp2=100*float(temp1[0])/float(sum_of_bytes_total[0])
                     self.percent_bytes.append(temp2)
+        
+        ###End of else statement###
  
+        #Disconnect from Database:
         ConnectorPool.ConnectorPool.CloseConnector()
         
     #This method returns the count of distinct itag appearances in DB        
@@ -180,7 +201,10 @@ class ItagStatisticsReport:
         print("====== ItagStatisticsReport END ======\n")
         
 #Test:
-r=ItagStatisticsReport(1,1)
+r=ItagStatisticsReport()
+test_list=[]
+for i in range (1,310):
+    test_list.append(i)
 r.loadResults()
 r1=r.GetCount()
 for i in range (0, len(r1)) :
@@ -192,4 +216,4 @@ r1=r.GetBytesPer()
 for i in range (0, len(r1)) :
     print ("Key_"+str(i)+": "+str(r1[i].key)+"    Value_"+str(i)+": "+str(r1[i].value))
 
-#r.PrintReportResults()
+r.PrintReportResults()
