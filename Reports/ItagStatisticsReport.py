@@ -209,7 +209,7 @@ r=ItagStatisticsReport()
 test_list=[]
 for i in range (1,310):
     test_list.append(i)
-r.loadResults()
+r.loadResults(310)
 r1=r.GetCount()
 for i in range (0, len(r1)) :
     print ("Key_"+str(i)+": "+str(r1[i].key)+"    Value_"+str(i)+": "+str(r1[i].value))
