@@ -10,8 +10,8 @@ Created on Jun 1, 2013
 #GetCount, GetTransPer and GetBytesPer all return lists of the report results, accordingly.
 #PrintReportResults prints all results
 
-from DAL import ConnectorPool
-from Utils import Pair
+from DAL import UIConnectorPool
+from DAL import Pair
 
 class ItagStatisticsReport:
     
@@ -25,7 +25,7 @@ class ItagStatisticsReport:
     #This method executes the actual report, i.e. sends query to DB and stores the results in self fields.
     def loadResults(self, Flow_ID=0):
         #Connect:
-        cursor=ConnectorPool.ConnectorPool.GetConnector()
+        cursor=UIConnectorPool.ConnectorPool.GetConnector()
         #Initiate variables:
         self.count=[] #itag values counter
         self.bytes =[] #itage bytes counter
@@ -151,7 +151,7 @@ class ItagStatisticsReport:
         ###End of else statement###
  
         #Disconnect from Database:
-        ConnectorPool.ConnectorPool.CloseConnector()
+        UIConnectorPool.ConnectorPool.CloseConnector()
         
     #This method returns the count of distinct itag appearances in DB        
     def GetCount(self) :

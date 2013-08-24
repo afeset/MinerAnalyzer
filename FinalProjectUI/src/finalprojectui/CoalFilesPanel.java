@@ -15,7 +15,7 @@ import javax.swing.*;
  * @author dell
  */
 public class CoalFilesPanel extends javax.swing.JPanel {
-    private Vector<Pair<Integer,String>> _files;
+    public Vector<Pair<Integer,String>> _files;
     /**
      * Creates new form ColeFilesPanel
      */

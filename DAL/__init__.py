@@ -1,1 +1,1 @@
-__all__=['ResponseHandler', 'RequestHandler','ConnectorPool', 'TransactionHandler', 'UIConnectorPool']
+__all__=['ResponseHandler', 'RequestHandler','ConnectorPool', 'TransactionHandler', 'UIConnectorPool','Pair']

@@ -37,7 +37,7 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="reportsMenu">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Edit"/>
+            <Property name="text" type="java.lang.String" value="Reports"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="runReportItem">

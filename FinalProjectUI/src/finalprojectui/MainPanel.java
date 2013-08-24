@@ -5,9 +5,11 @@
 package finalprojectui;
 
 import Utils.ClosableTab;
-import finalprojectui.Reports.RequestsPercentagePerHeaderReportPanel;
+import finalprojectui.Entities.Pair;
+import finalprojectui.Reports.ItagStatisticsReport.ItagStatisticsReportPanel;
 import java.awt.Dialog;
 import java.awt.Image;
+import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -18,16 +20,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class MainPanel extends javax.swing.JPanel {
     private ReportType lastSelectedReport;
-    private JFrame _parentFrame;
     
     /**
      * Creates new form MainPanel
      */
     public MainPanel() {
-        initComponents();
-    }
-    
-    public MainPanel(JFrame parentFrame) {
         initComponents();
     }
     
@@ -59,9 +56,9 @@ public class MainPanel extends javax.swing.JPanel {
         //TODO: need to implelent
     
     }
-    public void openNewReportTab()
+    public void openNewReportTab(Vector<Pair<Integer,String>> coalFiles)
     {
-       reportsTabPanel.add(lastSelectedReport.name()+" ("+reportsTabPanel.getTabCount()+")", new RequestsPercentagePerHeaderReportPanel());
+       reportsTabPanel.add(lastSelectedReport.name()+" ("+reportsTabPanel.getTabCount()+")", new ItagStatisticsReportPanel(coalFiles));
     
         
     }
