@@ -31,6 +31,7 @@ public class FinalProjectUI {
       //  interpreter.execfile("/home/asaf/workspace/FinalProject/src/Configuration/Config.py");
         //interpreter.execfile("/home/asaf/workspace/FinalProject/src/Queries and Reports/Reports/RquestsUserAgentPercentageReport.py");
         interpreter.execfile("C:\\Users\\dell\\Documents\\GitHub\\MinerAnalyzer\\MinerAnalyzer\\DAL\\Test2.py");
+        //interpreter.execfile("C:\\Users\\dell\\Documents\\GitHub\\MinerAnalyzer\\MinerAnalyzer\\Utils\\Pair.py");
         //interpreter.execfile("C:\\Users\\dell\\Documents\\GitHub\\Finalproject\\FinalProject\\src\\Reports\\RequestsPercentagePerHeaderReport.py");
         
         
@@ -38,17 +39,21 @@ public class FinalProjectUI {
         //PyObject result2 = interpreter.eval("RquestsUserAgentPercentageReport().PrintReportResults()");
         //PyObject result2 = interpreter.eval("RequestsPercentagePerHeaderReport(1,1,1).loadResults()");
         //PyObject result2 = interpreter.eval("Test2().run()");
-        PyList result2 = (PyList) interpreter.eval("Test2().run()");
-        PyObject[] arr=result2.getArray();
-        for(int i=0; i<arr.length; i++)
-        {
-            System.out.println(arr[i].__getattr__("key"));
-        }
+        //PyObject test=interpreter.eval("Test2()");
+        //PyFloat result2 = (PyFloat)test.invoke("run");
+        //System.out.println(result2.asDouble());
+        //PyList result2 = (PyList) interpreter.eval("Test2().run()");
+        //PyObject[] arr=result2.getArray();
+        //for(int i=0; i<arr.length; i++)
+        //{
+        //    System.out.println(arr[i].__getattr__("key"));
+        //}
         //System.out.println(result2.__getattr__("key"));
         //result2.invoke("Bla", new PyInteger(5));
         //System.out.println(result2.__getattr__("key"));
        // PyObject result3 = interpreter.eval(result2, PrintReportResults()");
         //System.out.println(result.toString());
+        
     }
     
     public static void init() {

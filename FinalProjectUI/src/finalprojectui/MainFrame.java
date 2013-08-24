@@ -31,7 +31,7 @@ public class MainFrame extends javax.swing.JFrame {
         
         _coalsPanel=new CoalFilesPanel();
         mainSplitPanel.setLeftComponent(_coalsPanel);
-        _mainPanel=new MainPanel(this);
+        _mainPanel=new MainPanel();
         mainSplitPanel.setRightComponent(_mainPanel);
         
         loadCoalFileButton.setToolTipText("Load coal files");
@@ -140,7 +140,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         menuBar.add(fileMenu);
 
-        reportsMenu.setText("Edit");
+        reportsMenu.setText("Reports");
 
         runReportItem.setText("Run new report");
         runReportItem.addActionListener(new java.awt.event.ActionListener() {
@@ -303,7 +303,7 @@ public class MainFrame extends javax.swing.JFrame {
     {
         ReportSelectionDialog selectionFrame = new ReportSelectionDialog(this, true, _mainPanel);
         selectionFrame.show();
-        _mainPanel.openNewReportTab();
+        _mainPanel.openNewReportTab(_coalsPanel._files);
     }
     /**
      * @param args the command line arguments

@@ -2,9 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package finalprojectui.Reports;
+package finalprojectui.Reports.ItagStatisticsReport;
 
+import finalprojectui.Entities.Pair;
 import java.awt.BorderLayout;
+import java.util.Vector;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -17,15 +19,22 @@ import org.jfree.util.Rotation;
  *
  * @author dell
  */
-public class RequestsPercentagePerHeaderReportPanel extends javax.swing.JPanel {
+public class ItagStatisticsReportPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form RequestsPercentagePerHeaderReportPanel
      */
-    public RequestsPercentagePerHeaderReportPanel() {
+    public ItagStatisticsReportPanel(Vector<Pair<Integer,String>> coalFiles) {
         initComponents();
         this.setLayout(new BorderLayout());
-        this.add(new RequestsPercentagePerHeaderReportParametersPanel(), BorderLayout.LINE_START);
+        this.add(new ItagStatisticsReportParamsPanel(coalFiles), BorderLayout.LINE_START);
+        this.add(new ItagStatisticsReportReaultsPanel(), BorderLayout.CENTER);
+        
+        
+    }
+    
+    private void initTable()
+    {
         // This will create the dataset 
         PieDataset dataset = createDataset();
         // based on the dataset we create the chart
@@ -35,11 +44,7 @@ public class RequestsPercentagePerHeaderReportPanel extends javax.swing.JPanel {
         // default size
         chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
         this.add(chartPanel, BorderLayout.CENTER);
-        
-        
     }
-    
-        
     /**
      * Creates a sample dataset 
      */

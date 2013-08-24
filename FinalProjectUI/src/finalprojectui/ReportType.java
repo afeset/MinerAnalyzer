@@ -9,7 +9,7 @@ package finalprojectui;
  * @author dell
  */
 public enum ReportType {
-    RequestsPercentagePerHeaderReport("Requests Percentage Per Header Report");   
+    ItagStatisticsReport("Itag Statistics Report");   
     
     private final String name;       
 

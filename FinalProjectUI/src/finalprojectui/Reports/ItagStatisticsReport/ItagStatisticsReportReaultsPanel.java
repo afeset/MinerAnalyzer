@@ -2,8 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package finalprojectui.Reports;
+package finalprojectui.Reports.ItagStatisticsReport;
 
+import finalprojectui.Entities.Pair;
+import java.util.List;
+import java.util.Vector;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -16,14 +21,41 @@ import org.jfree.util.Rotation;
  *
  * @author dell
  */
-public class RequestsPercentagePerHeaderReportParametersPanelReaultsPanel extends javax.swing.JPanel {
+public class ItagStatisticsReportReaultsPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form
      * RequestsPercentagePerHeaderReportParametersPanelReaultsPanel
      */
-    public RequestsPercentagePerHeaderReportParametersPanelReaultsPanel() {
+    public ItagStatisticsReportReaultsPanel() {
         initComponents();
+        initTable();
+    }
+    
+    private void initTable()
+    {
+        ItagStatisticsReportLoader loader=new ItagStatisticsReportLoader(null);
+        loader.load();
+        Vector<Pair<Integer,Double>> count=loader.getCountResults();
+        Vector<Pair<Integer,Double>> trans=loader.getTransResults();
+        Vector<Pair<Integer,Double>> bytes=loader.getBytesResults();
+        
+        String[] columnNames={"Distinct item values","Count","% Transactions", "% Bytes"};
+        TableModel model=resTable.getModel();
+        DefaultTableModel newModel=new DefaultTableModel(columnNames,count.size());
+        for(int i=0; i<count.size(); i++)
+        {
+            newModel.setValueAt(count.get(i).getKey(), i, 0);
+            newModel.setValueAt(count.get(i).getValue(), i, 1);
+            newModel.setValueAt(trans.get(i).getValue(), i, 2);
+            newModel.setValueAt(bytes.get(i).getValue(), i, 3);
+        }
+        
+        resTable.setModel(newModel);
+    }
+    
+    private void initGraph()
+    {
         // This will create the dataset 
         PieDataset dataset = createDataset();
         // based on the dataset we create the chart
@@ -34,10 +66,7 @@ public class RequestsPercentagePerHeaderReportParametersPanelReaultsPanel extend
         chartPanel.setPreferredSize(new java.awt.Dimension(200, 270));
         // add it to our application
         this.add(chartPanel);
-        
-        
     }
-    
     /**
      * Creates a sample dataset 
      */
@@ -82,17 +111,32 @@ public class RequestsPercentagePerHeaderReportParametersPanelReaultsPanel extend
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        resTable = new javax.swing.JTable();
+
+        resTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Distinct item values", "Count", "% Transactions", "% Bytes4"
+            }
+        ));
+        jScrollPane1.setViewportView(resTable);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable resTable;
     // End of variables declaration//GEN-END:variables
 }

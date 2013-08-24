@@ -174,3 +174,4 @@ public class ClosableTab extends javax.swing.JPanel {
     private javax.swing.JTabbedPane tabbedPane;
     // End of variables declaration                   
 }
+
