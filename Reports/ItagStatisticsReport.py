@@ -141,6 +141,8 @@ class ItagStatisticsReport:
                 for i in range (0, len(self.distinct)):
                     cursor.execute("SELECT SUM(NumDownloadedBytes) from Transactions where ID=ANY (SELECT Transactions_ID FROM Requests where Req_ID=ANY (SELECT Request_ID from `Requests-Params` where Name_request_param='itag' AND Value="+str(self.distinct[i])+"))")
                     temp1=cursor.fetchone()
+                    if temp1[0] == None :
+                        temp1[0] = 0
                     temp2=100*float(temp1[0])/float(sum_of_bytes_total[0])
                     self.percent_bytes.append(temp2)
         
