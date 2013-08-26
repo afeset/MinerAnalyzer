@@ -8,18 +8,16 @@ from DAL import ConnectorPool
 
 class ReqParamStatisticsReport:
     
-    def __init__(self, HeaderName, StartDate, EndDate):
-        self.HeaderName=HeaderName
-        self.StartDate=StartDate
-        self.EndDate=EndDate
-        self.RequestsWithBeginURIParamTrans=0
-        self.RequestsWithBeginURIParamBytes=0
-        self.NoBeginBytes=0
-        self.NoBeginPercent=0
-        self.RequestsWithBeginEqZeroTrans=0
-        self.RequestsWithBeginEqZeroBytes=0
-        self.RequestsWithBeginNotEqZeroTrans=0
-        self.RequestsWithBeginNotEqZeroBytes=0
+    def __init__(self, ParamName):
+        self.ParamName=ParamName
+        self.RequestsWithURIParamTrans=0
+        self.RequestsWithURIParamBytes=0
+        self.NoParamBytes=0
+        self.NoParamPercent=0
+        self.RequestsWithParamEqZeroTrans=0
+        self.RequestsWithParamEqZeroBytes=0
+        self.RequestsWithParamNotEqZeroTrans=0
+        self.RequestsWithParamNotEqZeroBytes=0
         
     def loadResults(self):
         
@@ -33,79 +31,79 @@ class ReqParamStatisticsReport:
             return result
             print (result)
         else:
-            cursor.execute("SELECT COUNT(*) FROM `Requests-Params` WHERE Name_request_param='begin'")
+            cursor.execute("SELECT COUNT(*) FROM `Requests-Params` WHERE Name_request_param='"+self.ParamName+"'")
             count=cursor.fetchone()
-            self.RequestsWithBeginURIParamTrans=100*(float(count[0])/float(total[0]))
-            self.NoBeginPercent=100-self.RequestsWithBeginURIParamTrans
+            self.RequestsWithURIParamTrans=100*(float(count[0])/float(total[0]))
+            self.NoParamPercent=100-self.RequestsWithURIParamTrans
             
             #Percentage in terms of number of bytes:
             cursor.execute("SELECT SUM(NumDownloadedBytes) FROM Transactions")
             sum_of_bytes_total=cursor.fetchone()
-            cursor.execute("select SUM(NumDownloadedBytes) from Transactions where ID=ANY(select Transactions_ID from Requests where Req_ID=ANY(select Request_ID from `Requests-Params` where Name_request_param='begin'))")
-            sum_of_bytes_begin=cursor.fetchone()
-            self.RequestsWithBeginURIParamBytes=100*float(int(sum_of_bytes_begin[0] or 0))/float(sum_of_bytes_total[0])
-            self.NoBeginBytes=100-self.RequestsWithBeginURIParamBytes
+            cursor.execute("select SUM(NumDownloadedBytes) from Transactions where ID=ANY(select Transactions_ID from Requests where Req_ID=ANY(select Request_ID from `Requests-Params` where Name_request_param='"+self.ParamName+"'))")
+            sum_of_bytes_param=cursor.fetchone()
+            self.RequestsWithURIParamBytes=100*float(int(sum_of_bytes_param[0] or 0))/float(sum_of_bytes_total[0])
+            self.NoParamBytes=100-self.RequestsWithURIParamBytes
                     
             #Percentage only of begin=0, transactions:
-            cursor.execute("SELECT COUNT(*) FROM `Requests-Params` WHERE Name_request_param='begin' AND Value='0'")
+            cursor.execute("SELECT COUNT(*) FROM `Requests-Params` WHERE Name_request_param='"+self.ParamName+"' AND Value='0'")
             count=cursor.fetchone()
-            self.RequestsWithBeginEqZeroTrans=100*(float(count[0])/float(total[0]))
+            self.RequestsWithParamEqZeroTrans=100*(float(count[0])/float(total[0]))
                 
             #Percentage only of begin=0, bytes:
-            cursor.execute("SELECT SUM(NumDownloadedBytes) FROM Transactions WHERE ID=ANY(select Transactions_ID from Requests where Req_ID=ANY(select Request_ID from `Requests-Params` where Name_request_param='begin' and Value='0'))")
-            sum_of_bytes_begin=cursor.fetchone()
-            self.RequestsWithBeginEqZeroBytes=100*float(int(sum_of_bytes_begin[0] or 0))/float(sum_of_bytes_total[0])
+            cursor.execute("SELECT SUM(NumDownloadedBytes) FROM Transactions WHERE ID=ANY(select Transactions_ID from Requests where Req_ID=ANY(select Request_ID from `Requests-Params` where Name_request_param='"+self.ParamName+"' and Value='0'))")
+            sum_of_bytes_param=cursor.fetchone()
+            self.RequestsWithParamEqZeroBytes=100*float(int(sum_of_bytes_param[0] or 0))/float(sum_of_bytes_total[0])
             
             #Percentage only of begin!=0, transactions:
-            cursor.execute("SELECT COUNT(*) FROM `Requests-Params` WHERE Name_request_param='begin' AND Value!='0'")
+            cursor.execute("SELECT COUNT(*) FROM `Requests-Params` WHERE Name_request_param='"+self.ParamName+"' AND Value!='0'")
             count=cursor.fetchone()
-            self.RequestsWithBeginNotEqZeroTrans=100*(float(count[0])/float(total[0]))
+            self.RequestsWithParamNotEqZeroTrans=100*(float(count[0])/float(total[0]))
             
             #Percentage only of begin!=0, bytes:
-            cursor.execute("select SUM(NumDownloadedBytes) from Transactions where ID= ANY(select Transactions_ID from Requests where Req_ID= ANY(select Request_ID from `Requests-Params` where Name_request_param='begin' and Value!='0'))")
-            sum_of_bytes_begin=cursor.fetchone()
-            self.RequestsWithBeginNotEqZeroBytes=100*float(int(sum_of_bytes_begin[0] or 0))/float(sum_of_bytes_total[0])
+            cursor.execute("select SUM(NumDownloadedBytes) from Transactions where ID= ANY(select Transactions_ID from Requests where Req_ID= ANY(select Request_ID from `Requests-Params` where Name_request_param='"+self.ParamName+"' and Value!='0'))")
+            sum_of_bytes_param=cursor.fetchone()
+            self.RequestsWithParamNotEqZeroBytes=100*float(int(sum_of_bytes_param[0] or 0))/float(sum_of_bytes_total[0])
         
             ConnectorPool.ConnectorPool.CloseConnector()
         
     def PrintReportResults(self):  
         print("===== ReqParamStatisticsReport START ======")
           
-        print("Percentage of Requests with 'begin' URI param (all values):")
+        print("Percentage of Requests with '"+self.ParamName+"' URI param (all values):")
         print("In terms of number of transactions:")
-        print(self.RequestsWithBeginURIParamTrans)
+        print(self.RequestsWithURIParamTrans)
         
         print("In terms of bytes:")
-        print(self.RequestsWithBeginURIParamBytes)
+        print(self.RequestsWithURIParamBytes)
         print("\n")
         
         #Non-begin requests:
-        print("Percentage of Requests WITHOUT 'begin' URI param:")
+        print("Percentage of Requests WITHOUT '"+self.ParamName+"' URI param:")
         print("In terms of number of transactions:")
-        print(self.NoBeginPercent)
+        print(self.NoParamPercent)
         print("In terms of bytes:")
-        print(self.NoBeginBytes)
+        print(self.NoParamBytes)
         print("\n")
         
-        print("Percentage of Requests with 'begin'=0:")
+        print("Percentage of Requests with '"+self.ParamName+"'=0:")
         print("In terms of number of transactions:")
-        print(self.RequestsWithBeginEqZeroTrans)
+        print(self.RequestsWithParamEqZeroTrans)
         
         print("In terms of bytes:")
-        print(self.RequestsWithBeginEqZeroBytes)
+        print(self.RequestsWithParamEqZeroBytes)
         print("\n")
         
-        print("Percentage of Requests with 'begin'!=0:")
+        print("Percentage of Requests with '"+self.ParamName+"'!=0:")
         print("In terms of number of transactions:")
-        print(self.RequestsWithBeginNotEqZeroTrans)
+        print(self.RequestsWithParamNotEqZeroTrans)
         
         print("In terms of bytes:")
-        print(self.RequestsWithBeginNotEqZeroBytes)
+        print(self.RequestsWithParamNotEqZeroBytes)
         
-        print("====== RequestPercentagePerHeaderReport END ======\n")
+        print("====== ReqParamStatisticsReport END ======\n")
         
 #Test - moved to Tests Package        
-r=ReqParamStatisticsReport(1,1,1)
+r=ReqParamStatisticsReport('begin')
 r.loadResults()
 r.PrintReportResults()       
 
