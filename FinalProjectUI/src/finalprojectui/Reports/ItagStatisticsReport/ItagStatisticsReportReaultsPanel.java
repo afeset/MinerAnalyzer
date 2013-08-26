@@ -5,16 +5,34 @@
 package finalprojectui.Reports.ItagStatisticsReport;
 
 import finalprojectui.Entities.Pair;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.List;
 import java.util.Vector;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.CategoryLabelPositions;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.labels.ItemLabelAnchor;
+import org.jfree.chart.labels.ItemLabelPosition;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PiePlot3D;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.StackedBarRenderer;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
+import org.jfree.ui.TextAnchor;
 import org.jfree.util.Rotation;
 
 /**
@@ -22,84 +40,132 @@ import org.jfree.util.Rotation;
  * @author dell
  */
 public class ItagStatisticsReportReaultsPanel extends javax.swing.JPanel {
-
+    private Vector<Pair<Integer,Double>> _count;
+    private Vector<Pair<Integer,Double>> _trans;
+    private Vector<Pair<Integer,Double>> _bytes;
     /**
      * Creates new form
      * RequestsPercentagePerHeaderReportParametersPanelReaultsPanel
      */
     public ItagStatisticsReportReaultsPanel() {
         initComponents();
-        initTable();
+        this.setLayout(new BorderLayout());
     }
     
-    private void initTable()
+    public void loadLists()
     {
         ItagStatisticsReportLoader loader=new ItagStatisticsReportLoader(null);
         loader.load();
-        Vector<Pair<Integer,Double>> count=loader.getCountResults();
-        Vector<Pair<Integer,Double>> trans=loader.getTransResults();
-        Vector<Pair<Integer,Double>> bytes=loader.getBytesResults();
+        _count=loader.getCountResults();
+        _trans=loader.getTransResults();
+        _bytes=loader.getBytesResults();
+    }
+    public void loadTable()
+    {
+        JTable resTable=new JTable();
+        loadLists();
         
         String[] columnNames={"Distinct item values","Count","% Transactions", "% Bytes"};
-        TableModel model=resTable.getModel();
-        DefaultTableModel newModel=new DefaultTableModel(columnNames,count.size());
-        for(int i=0; i<count.size(); i++)
+        DefaultTableModel model=new DefaultTableModel(columnNames,_count.size());
+        
+        for(int i=0; i<_count.size(); i++)
         {
-            newModel.setValueAt(count.get(i).getKey(), i, 0);
-            newModel.setValueAt(count.get(i).getValue(), i, 1);
-            newModel.setValueAt(trans.get(i).getValue(), i, 2);
-            newModel.setValueAt(bytes.get(i).getValue(), i, 3);
+            model.setValueAt(_count.get(i).getKey(), i, 0);
+            model.setValueAt(_count.get(i).getValue(), i, 1);
+            model.setValueAt(_trans.get(i).getValue(), i, 2);
+            model.setValueAt(_bytes.get(i).getValue(), i, 3);
         }
-        
-        resTable.setModel(newModel);
+        resTable.setModel(model);
+        JScrollPane scrollPane = new JScrollPane(resTable);
+        this.removeAll();
+        this.add(scrollPane, BorderLayout.CENTER);
+        this.revalidate();
     }
     
-    private void initGraph()
+    public void loadGraph()
     {
-        // This will create the dataset 
-        PieDataset dataset = createDataset();
-        // based on the dataset we create the chart
-        JFreeChart chart = createChart(dataset, "Title");
-        // we put the chart into a panel
+        loadLists();        
+        
+        CategoryDataset dataset = createDataset();
+        JFreeChart chart = createChart(dataset);
         ChartPanel chartPanel = new ChartPanel(chart);
-        // default size
-        chartPanel.setPreferredSize(new java.awt.Dimension(200, 270));
-        // add it to our application
-        this.add(chartPanel);
+        chartPanel.setPreferredSize(new Dimension(500, 270));
+        this.removeAll();
+        this.add(chartPanel, BorderLayout.CENTER);
+        this.revalidate();
+        
     }
+    
     /**
-     * Creates a sample dataset 
+     * Returns a sample dataset.
+     * 
+     * @return The dataset.
      */
-
-    private  PieDataset createDataset() {
-        DefaultPieDataset result = new DefaultPieDataset();
-        result.setValue("Linux", 29);
-        result.setValue("Mac", 20);
-        result.setValue("Windows", 51);
-        return result;
+    private CategoryDataset createDataset() {
+        
+        // row keys...
+        String transSeries = "% Transactions";
+        String bytesSeries = "% Bytes";
+        
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        // column keys...
+        for(int i=0; i<_count.size(); i++)
+        {
+            dataset.addValue(_trans.get(i).getValue(), transSeries, _count.get(i).getKey());
+            dataset.addValue(_bytes.get(i).getValue(), bytesSeries, _count.get(i).getKey());
+        }
+        return dataset;
         
     }
     
-    
-/**
-     * Creates a chart
-     */
-
-    private JFreeChart createChart(PieDataset dataset, String title) {
+    private JFreeChart createChart(final CategoryDataset dataset) {
         
-        JFreeChart chart = ChartFactory.createPieChart3D(title,          // chart title
-            dataset,                // data
-            true,                   // include legend
-            true,
-            false);
+        // create the chart...
+        final JFreeChart chart = ChartFactory.createBarChart(
+            "Itag Statistics Report",         // chart title
+            "Distinct itag values",               // domain axis label
+            "Percentage",                  // range axis label
+            dataset,                  // data
+            PlotOrientation.VERTICAL, // orientation
+            true,                     // include legend
+            true,                     // tooltips?
+            false                     // URLs?
+        );
 
-        PiePlot3D plot = (PiePlot3D) chart.getPlot();
-        plot.setStartAngle(290);
-        plot.setDirection(Rotation.CLOCKWISE);
-        plot.setForegroundAlpha(0.5f);
+        // NOW DO SOME OPTIONAL CUSTOMISATION OF THE CHART...
+
+        // set the background color for the chart...
+        //chart.setBackgroundPaint(Color.white);
+
+        // get a reference to the plot for further customisation...
+        CategoryPlot plot = chart.getCategoryPlot();
+        
+        //plot.setBackgroundPaint(Color.lightGray);
+        //plot.setDomainGridlinePaint(Color.white);
+        //plot.setRangeGridlinePaint(Color.white);
+
+        // set the range axis to display integers only...
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        ValueAxis axis = plot.getRangeAxis();
+        //axis.setRange(0, 100);
+        
+        //set values to show on bars
+        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+        renderer.setBaseItemLabelsVisible(true);
+        renderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
+        renderer.setDrawBarOutline(false);
+        renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12,TextAnchor.TOP_CENTER));
+        renderer.setItemMargin(0);
+        
+
         return chart;
         
     }
+    
+
+    
+    
  
 
     /**
@@ -111,32 +177,17 @@ public class ItagStatisticsReportReaultsPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        resTable = new javax.swing.JTable();
-
-        resTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Distinct item values", "Count", "% Transactions", "% Bytes4"
-            }
-        ));
-        jScrollPane1.setViewportView(resTable);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addGap(0, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+            .addGap(0, 300, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable resTable;
     // End of variables declaration//GEN-END:variables
 }

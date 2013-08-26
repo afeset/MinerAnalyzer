@@ -27,60 +27,13 @@ public class ItagStatisticsReportPanel extends javax.swing.JPanel {
     public ItagStatisticsReportPanel(Vector<Pair<Integer,String>> coalFiles) {
         initComponents();
         this.setLayout(new BorderLayout());
-        this.add(new ItagStatisticsReportParamsPanel(coalFiles), BorderLayout.LINE_START);
-        this.add(new ItagStatisticsReportReaultsPanel(), BorderLayout.CENTER);
+        ItagStatisticsReportReaultsPanel resultPanel=new ItagStatisticsReportReaultsPanel();
+        this.add(new ItagStatisticsReportParamsPanel(coalFiles, resultPanel), BorderLayout.LINE_START);
+        this.add(resultPanel, BorderLayout.CENTER);
         
         
     }
     
-    private void initTable()
-    {
-        // This will create the dataset 
-        PieDataset dataset = createDataset();
-        // based on the dataset we create the chart
-        JFreeChart chart = createChart(dataset, "Title");
-        // we put the chart into a panel
-        ChartPanel chartPanel = new ChartPanel(chart);
-        // default size
-        chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
-        this.add(chartPanel, BorderLayout.CENTER);
-    }
-    /**
-     * Creates a sample dataset 
-     */
-
-    private  PieDataset createDataset() {
-        DefaultPieDataset result = new DefaultPieDataset();
-        result.setValue("Linux", 29);
-        result.setValue("Mac", 20);
-        result.setValue("Windows", 51);
-        return result;
-        
-    }
-    
-    
-/**
-     * Creates a chart
-     */
-
-    private JFreeChart createChart(PieDataset dataset, String title) {
-        
-        JFreeChart chart = ChartFactory.createPieChart3D(title,          // chart title
-            dataset,                // data
-            true,                   // include legend
-            true,
-            false);
-
-        PiePlot3D plot = (PiePlot3D) chart.getPlot();
-        plot.setStartAngle(290);
-        plot.setDirection(Rotation.CLOCKWISE);
-        plot.setForegroundAlpha(0.5f);
-        return chart;
-        
-    }
- 
-
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

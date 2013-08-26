@@ -5,6 +5,7 @@
 package finalprojectui.Utils.PythonToJavaConverters;
 
 import finalprojectui.Entities.Pair;
+import java.text.DecimalFormat;
 import java.util.Vector;
 import org.python.core.*;
 
@@ -24,12 +25,20 @@ public class PyPairListToPairVectorConverter {
             if(res1 instanceof PyLong)
             {
                 PyLong value=(PyLong)arr[i].__getattr__("value");
-                res.add(new Pair<Integer,Double>(key.asInt(),value.asDouble()));
+                double tmp=value.asDouble();
+                DecimalFormat df = new DecimalFormat("#.##");
+                String dx=df.format(tmp);
+                tmp=Double.valueOf(dx);
+                res.add(new Pair<Integer,Double>(key.asInt(),tmp));
             }
             else
             {
                 PyFloat value=(PyFloat)arr[i].__getattr__("value");
-                res.add(new Pair<Integer,Double>(key.asInt(),value.asDouble()));
+                double tmp=value.asDouble();
+                DecimalFormat df = new DecimalFormat("#.##");
+                String dx=df.format(tmp);
+                tmp=Double.valueOf(dx);
+                res.add(new Pair<Integer,Double>(key.asInt(),tmp));
             }
         }
         return res;
