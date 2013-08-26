@@ -27,10 +27,17 @@ public class ItagStatisticsReportPanel extends javax.swing.JPanel {
     public ItagStatisticsReportPanel(Vector<Pair<Integer,String>> coalFiles) {
         initComponents();
         this.setLayout(new BorderLayout());
-        this.add(new ItagStatisticsReportParamsPanel(coalFiles), BorderLayout.LINE_START);
-        this.add(new ItagStatisticsReportReaultsPanel(), BorderLayout.CENTER);
+        ItagStatisticsReportReaultsPanel resultPanel=new ItagStatisticsReportReaultsPanel();
+        this.add(new ItagStatisticsReportParamsPanel(coalFiles, resultPanel), BorderLayout.LINE_START);
+        this.add(resultPanel, BorderLayout.CENTER);
         
         
+    }
+    
+    public void setResultsPanel(ItagStatisticsReportReaultsPanel panel)
+    {
+        this.add(panel, BorderLayout.CENTER);
+        this.repaint();
     }
     
     private void initTable()

@@ -18,22 +18,24 @@ import javax.swing.ListModel;
  */
 public class ItagStatisticsReportParamsPanel extends javax.swing.JPanel {
     private Vector<Pair<Integer,String>> _coalFiles;
+    private ItagStatisticsReportReaultsPanel _resultsPanel;
     /**
      * Creates new form RequestsPercentagePerHeaderReportParametersPanel
      */
-    public ItagStatisticsReportParamsPanel() {
+    public ItagStatisticsReportParamsPanel(ItagStatisticsReportReaultsPanel resultsPanel) {
         initComponents();
         _coalFiles=new Vector<Pair<Integer,String>>();
+        _resultsPanel=resultsPanel;
     }
 
     /**
      * Creates new form RequestsPercentagePerHeaderReportParametersPanel
      */
-    public ItagStatisticsReportParamsPanel(Vector<Pair<Integer,String>> coalFiles) {
+    public ItagStatisticsReportParamsPanel(Vector<Pair<Integer,String>> coalFiles, ItagStatisticsReportReaultsPanel resultsPanel) {
         initComponents();
         _coalFiles=coalFiles;
         addCoalFilesToList(coalFiles);
-        
+        _resultsPanel=resultsPanel;
     }
     
     private void addCoalFilesToList(Vector<Pair<Integer,String>> lst)
@@ -57,6 +59,8 @@ public class ItagStatisticsReportParamsPanel extends javax.swing.JPanel {
         coalFilesLabel = new javax.swing.JLabel();
         loadButton = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
+        ShowResultsLabel = new javax.swing.JLabel();
+        showResultsCombo = new javax.swing.JComboBox();
 
         setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -73,22 +77,35 @@ public class ItagStatisticsReportParamsPanel extends javax.swing.JPanel {
 
         saveButton.setText("Save");
 
+        ShowResultsLabel.setText("Show results as:");
+
+        showResultsCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Table", "Graph" }));
+        showResultsCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showResultsComboActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(ShowResultsLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(showResultsCombo, 0, 150, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(coalFilesLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(coalFilesCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(saveButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(loadButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(coalFilesLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(coalFilesCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(22, Short.MAX_VALUE))
+                        .addComponent(loadButton)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -97,7 +114,11 @@ public class ItagStatisticsReportParamsPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(coalFilesLabel)
                     .addComponent(coalFilesCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 217, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ShowResultsLabel)
+                    .addComponent(showResultsCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 179, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(loadButton)
                     .addComponent(saveButton))
@@ -106,13 +127,27 @@ public class ItagStatisticsReportParamsPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
-        // TODO add your handling code here:
+        if(showResultsCombo.getSelectedIndex()==0)
+        {
+            _resultsPanel.loadTable();
+        }
+        else
+        {
+            _resultsPanel.loadGraph();
+        }
+        
     }//GEN-LAST:event_loadButtonActionPerformed
 
+    private void showResultsComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showResultsComboActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_showResultsComboActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel ShowResultsLabel;
     private javax.swing.JComboBox coalFilesCombo;
     private javax.swing.JLabel coalFilesLabel;
     private javax.swing.JButton loadButton;
     private javax.swing.JButton saveButton;
+    private javax.swing.JComboBox showResultsCombo;
     // End of variables declaration//GEN-END:variables
 }
