@@ -43,7 +43,7 @@ class RequestsWithItagPercentageReportTests :
         #Generate several Transactions:
         translist = []
         for i in range (0, 10) :
-            trans = Transaction.Transaction(1, "2013-02-12 09:33:09", 2, 1484380411543127206, "Static-YOUTUBE", 16377, "24.144.25.215", 52565, "199.59.103.141", 80, 551344839, i+1, 1809500)
+            trans = Transaction.Transaction(1, "2013-02-12 09:33:09", 2, 1484380411543127206, "Static-YOUTUBE", 16377, "24.144.25.215", 52565, "199.59.103.141", 80, 551344839, 1, 1809500)
             translist.append(trans)
         #Generate several Requests:
         reqslist = []
