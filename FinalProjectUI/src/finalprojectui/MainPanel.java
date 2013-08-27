@@ -7,6 +7,8 @@ package finalprojectui;
 import Utils.ClosableTab;
 import finalprojectui.Entities.Pair;
 import finalprojectui.Reports.ItagStatisticsReport.ItagStatisticsReportPanel;
+import finalprojectui.Reports.ReqParamStatisticsReport.ReqParamStatisticsReportPanel;
+import finalprojectui.Reports.UserAgentStatisticsReport.UserAgentStatisticsReportPanel;
 import java.awt.Dialog;
 import java.awt.Image;
 import java.util.Vector;
@@ -20,12 +22,18 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class MainPanel extends javax.swing.JPanel {
     private ReportType lastSelectedReport;
+    private int _numberOfItagStatisticsReport;
+    private int _numberOfReqParamStatisticsReport;
+    private int _numberOfUserAgentStatisticsReport;
     
     /**
      * Creates new form MainPanel
      */
     public MainPanel() {
         initComponents();
+        _numberOfItagStatisticsReport=-1;
+        _numberOfReqParamStatisticsReport=-1;
+        _numberOfUserAgentStatisticsReport=-1;
     }
     
     /**
@@ -58,8 +66,36 @@ public class MainPanel extends javax.swing.JPanel {
     }
     public void openNewReportTab(Vector<Pair<Integer,String>> coalFiles)
     {
-       reportsTabPanel.add(lastSelectedReport.name()+" ("+reportsTabPanel.getTabCount()+")", new ItagStatisticsReportPanel(coalFiles));
-    
+        int count=0;
+        JPanel panelToAdd=null;
+        if(lastSelectedReport.equalsName(ReportType.ItagStatisticsReport.toString()))
+        {
+            _numberOfItagStatisticsReport++;
+            count=_numberOfItagStatisticsReport;
+            panelToAdd=new ItagStatisticsReportPanel(coalFiles);
+        }
+        else if(lastSelectedReport.equalsName(ReportType.ReqParamStatisticsReport.toString()))
+        {
+            _numberOfReqParamStatisticsReport++;
+            count=_numberOfReqParamStatisticsReport;
+            panelToAdd=new ReqParamStatisticsReportPanel(coalFiles);
+        }
+        else if(lastSelectedReport.equalsName(ReportType.UserAgentStatisticsReport.toString()))
+        {
+            _numberOfUserAgentStatisticsReport++;
+            count=_numberOfUserAgentStatisticsReport;
+            panelToAdd=new UserAgentStatisticsReportPanel(coalFiles);
+        }
+        if(count==0)
+        {
+            reportsTabPanel.add(lastSelectedReport.name(), panelToAdd);
+        }
+        else
+        {
+            reportsTabPanel.add(lastSelectedReport.name()+"("+count+")", panelToAdd);
+        }
+        
+        reportsTabPanel.setSelectedIndex(reportsTabPanel.getTabCount()-1);
         
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables

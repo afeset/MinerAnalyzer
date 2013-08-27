@@ -61,6 +61,9 @@ public class ReportSelectionDialog extends javax.swing.JDialog {
     {
         _reports=new Vector<ReportType>();
         _reports.add(ReportType.ItagStatisticsReport);
+        _reports.add(ReportType.ReqParamStatisticsReport);
+        _reports.add(ReportType.UserAgentStatisticsReport);
+        
     }
 
     /**
@@ -97,7 +100,7 @@ public class ReportSelectionDialog extends javax.swing.JDialog {
         });
 
         reportsList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Itag Statistics Report" };
+            String[] strings = { "Itag Statistics Report", "Requests Params Statistics Report", "User Agent Statistics Report" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });

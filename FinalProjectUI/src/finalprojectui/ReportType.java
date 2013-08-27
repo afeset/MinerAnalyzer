@@ -9,7 +9,9 @@ package finalprojectui;
  * @author dell
  */
 public enum ReportType {
-    ItagStatisticsReport("Itag Statistics Report");   
+    ItagStatisticsReport("Itag Statistics Report"),
+    ReqParamStatisticsReport("Requests Params Statistics Report"),
+    UserAgentStatisticsReport("User Agent Statistics Report");
     
     private final String name;       
 

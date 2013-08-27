@@ -5,6 +5,7 @@
 package finalprojectui;
 
 
+import finalprojectui.Utils.PyInterpreter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -30,10 +31,13 @@ public class FinalProjectUI {
         //PythonInterpreter interpreter=new PythonInterpreter();
       //  interpreter.execfile("/home/asaf/workspace/FinalProject/src/Configuration/Config.py");
         //interpreter.execfile("/home/asaf/workspace/FinalProject/src/Queries and Reports/Reports/RquestsUserAgentPercentageReport.py");
-        interpreter.execfile("C:\\Users\\dell\\Documents\\GitHub\\MinerAnalyzer\\MinerAnalyzer\\DAL\\Test2.py");
+       // interpreter.execfile("C:\\Users\\dell\\Documents\\GitHub\\MinerAnalyzer\\MinerAnalyzer\\DAL\\Test2.py");
         //interpreter.execfile("C:\\Users\\dell\\Documents\\GitHub\\MinerAnalyzer\\MinerAnalyzer\\Utils\\Pair.py");
         //interpreter.execfile("C:\\Users\\dell\\Documents\\GitHub\\Finalproject\\FinalProject\\src\\Reports\\RequestsPercentagePerHeaderReport.py");
-        
+        //interpreter.execfile("Reports\\ReqParamStatisticsReport.py");
+        interpreter.execfile("C:\\Users\\dell\\Documents\\GitHub\\MinerAnalyzer\\MinerAnalyzer\\Reports\\ReqParamStatisticsReport.py");
+       PyObject report=interpreter.eval("ReqParamStatisticsReport('begin')");
+       report.invoke("loadResults");
         
         //PyObject result = interpreter.eval("RquestsUserAgentPercentageReport().loadResults()");
         //PyObject result2 = interpreter.eval("RquestsUserAgentPercentageReport().PrintReportResults()");

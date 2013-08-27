@@ -28,11 +28,13 @@ public class MainFrame extends javax.swing.JFrame {
         
         //set the frame to fit he screen size
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        
         _coalsPanel=new CoalFilesPanel();
-        mainSplitPanel.setLeftComponent(_coalsPanel);
+        JScrollPane scrollPaneCoals = new JScrollPane(_coalsPanel);
+        scrollPaneCoals.setMinimumSize(new Dimension(170,50));
+        mainSplitPanel.setLeftComponent(scrollPaneCoals);
         _mainPanel=new MainPanel();
-        mainSplitPanel.setRightComponent(_mainPanel);
+        JScrollPane scrollPaneMain = new JScrollPane(_mainPanel);
+        mainSplitPanel.setRightComponent(scrollPaneMain);
         
         loadCoalFileButton.setToolTipText("Load coal files");
         removeCoalFileButton.setToolTipText("Remove coal files");
